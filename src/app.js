@@ -11,11 +11,6 @@ app.listen(7777, () => {
 
 //Adding Request Handlers
 
-//Global Request handler - Adding this will shadow the other request handlers
-app.use("/", (req, res) => {
-  res.send("Global HEllo WOrld");
-});
-
 //Request handler for requests coming at path /hello
 app.use("/hello", (req, res) => {
   res.send("Hello World from Hello");
@@ -24,4 +19,9 @@ app.use("/hello", (req, res) => {
 //Request Handler for requests coming at the path /test
 app.use("/test", (req, res) => {
   res.send("Hello From Test");
+});
+
+//Keeping / Request handler at the bottom for default scenario
+app.use("/", (req, res) => {
+  res.send("Global HEllo WOrld");
 });
