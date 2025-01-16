@@ -12,16 +12,31 @@ app.listen(7777, () => {
 //Adding Request Handlers
 
 //Request handler for requests coming at path /hello
-app.use("/hello", (req, res) => {
-  res.send("Hello World from Hello");
+app.get("/hello", (req, res) => {
+  res.send({ firstName: "Rajatsingh", lasName: "Rajput" });
 });
 
+app.post("/hello", (req, res) => {
+  res.send("Posted data to the server successfully");
+});
+
+app.delete("/hello", (req, res) => {
+  res.send("Deleted data");
+});
+
+app.patch("/hello", (req, res) => {
+  res.send("Patched data");
+});
+
+app.put("/hello", (req, res) => {
+  res.send("Put Hello");
+});
 //Request Handler for requests coming at the path /test
 app.use("/test", (req, res) => {
   res.send("Hello From Test");
 });
 
 //Keeping / Request handler at the bottom for default scenario
-app.use("/", (req, res) => {
-  res.send("Global HEllo WOrld");
-});
+// app.use("/", (req, res) => {
+//   res.send("Global HEllo WOrld");
+// });
