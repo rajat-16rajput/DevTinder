@@ -1,6 +1,6 @@
 //Importing Express Server
 const express = require("express");
-const { adminAuth } = require("./Middlewares/auth");
+const { userAuth } = require("./Middlewares/auth");
 //Creating expres server
 const app = express();
 
@@ -9,13 +9,12 @@ app.listen(7777, () => {
   console.log("Server listening to port 7777");
 });
 
-//Middleware for admin api's
-app.use("/admin", adminAuth);
+//Adding a dummy middleware for all user API's except login
 
-app.get("/admin/getUser", (req, res) => {
-  res.send("All Data sent");
+app.get("/user/getID", userAuth, (req, res) => {
+  res.send("Id Sent successfully !");
 });
 
-app.get("/admin/deleteUser", (req, res) => {
-  res.send("User deleted");
+app.get("/user/login", (req, res) => {
+  res.send("Login Successsfull!!");
 });

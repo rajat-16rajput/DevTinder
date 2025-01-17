@@ -8,4 +8,14 @@ const adminAuth = (req, res, next) => {
   }
 };
 
-module.exports = { adminAuth };
+const userAuth = (req, res, next) => {
+  const token = "xydz";
+  const isUserAuthenticated = token === "xyz";
+  if (!isUserAuthenticated) {
+    res.status(401).send("Unauthorized Request");
+  } else {
+    next();
+  }
+};
+
+module.exports = { userAuth };
