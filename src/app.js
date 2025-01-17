@@ -1,6 +1,6 @@
 //Importing Express Server
 const express = require("express");
-
+const { adminAuth } = require("./Middlewares/auth");
 //Creating expres server
 const app = express();
 
@@ -9,40 +9,13 @@ app.listen(7777, () => {
   console.log("Server listening to port 7777");
 });
 
-//Note : For a specific route only one response is valid and is sent.
-//Adding multiple responses wont work since only the first response is sent due to synchronous behaviour of JS.
-app.use(
-  "/about",
-  (req, res, next) => {
-    next();
-  },
-  [
-    (req, res, next) => {
-      console.log("Array1");
-      next();
-    },
-    (req, res, next) => {
-      console.log("Array2");
-      next();
-    }
-  ],
-  (req, res, next) => {
-    next();
-  },
-  (req, res) => {
-    res.send("Hello 4");
-  }
-);
+//Middleware for admin api's
+app.use("/admin", adminAuth);
 
-//Adding multiple middlewares in a different way
-app.get("/", (req, res) => {
-  res.send("Hhahaha");
+app.get("/admin/getUser", (req, res) => {
+  res.send("All Data sent");
 });
 
-app.get("/contact", (req, res, next) => {
-  next();
-});
-
-app.get("/contact", (req, res) => {
-  res.send("Contact");
+app.get("/admin/deleteUser", (req, res) => {
+  res.send("User deleted");
 });
