@@ -33,3 +33,16 @@ app.use(
     res.send("Hello 4");
   }
 );
+
+//Adding multiple middlewares in a different way
+app.get("/", (req, res) => {
+  res.send("Hhahaha");
+});
+
+app.get("/contact", (req, res, next) => {
+  next();
+});
+
+app.get("/contact", (req, res) => {
+  res.send("Contact");
+});
