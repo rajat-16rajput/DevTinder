@@ -18,15 +18,11 @@ ConnectToDB()
     console.log("Something went wrong... Couldn't connect to DB");
   });
 
+//Converting the request json objects into js objects at all Routes
+app.use(express.json());
+
 app.post("/signUp", (req, res) => {
-  const rohit = {
-    firstName: "Rohit",
-    lastName: "Sharma",
-    age: 37,
-    email: "rohit@hittu.com",
-    gender: "Male"
-  };
-  const user = new User(rohit);
+  const user = new User(req.body);
 
   try {
     user.save();
