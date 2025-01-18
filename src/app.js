@@ -9,12 +9,15 @@ app.listen(7777, () => {
   console.log("Server listening to port 7777");
 });
 
-//Adding a dummy middleware for all user API's except login
+//Adding a WildCard Error Handler
 
-app.get("/user/getID", userAuth, (req, res) => {
-  res.send("Id Sent successfully !");
+app.get("/getUserData", (req, res) => {
+  throw new Error("Eorrrorororororor");
+  res.send("Fetched user Data"); //Wont execute due to Error above
 });
 
-app.get("/user/login", (req, res) => {
-  res.send("Login Successsfull!!");
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    res.status(500).send("Something went wrong...");
+  }
 });
