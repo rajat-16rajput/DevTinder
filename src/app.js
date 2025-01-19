@@ -21,6 +21,7 @@ ConnectToDB()
 //Converting the requested json objects into js objects at all Routes
 app.use(express.json());
 
+//POST Api to dyanamically add the data in the DB
 app.post("/signUp", (req, res) => {
   const user = new User(req.body);
 
@@ -44,5 +45,20 @@ app.get("/user", async (req, res) => {
     }
   } catch (err) {
     res.status(400).send("Something went wrong...");
+  }
+});
+
+//GET Api to fetch all documents
+
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    if (users.length === 0) {
+      res.status(404).send("No Users found");
+    } else {
+      res.send(users);
+    }
+  } catch (err) {
+    res.send("Something went wrong");
   }
 });
