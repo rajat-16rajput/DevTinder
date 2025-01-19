@@ -33,7 +33,7 @@ app.post("/signUp", (req, res) => {
   }
 });
 
-//GET Api to search a user by the emailId
+//GET Api to fetch a user by the emailId
 app.get("/user", async (req, res) => {
   const userEmail = req.body.emailId;
   try {
@@ -49,7 +49,6 @@ app.get("/user", async (req, res) => {
 });
 
 //GET Api to fetch all documents
-
 app.get("/feed", async (req, res) => {
   try {
     const users = await User.find({});
@@ -60,5 +59,15 @@ app.get("/feed", async (req, res) => {
     }
   } catch (err) {
     res.send("Something went wrong");
+  }
+});
+
+app.delete("/user", async (req, res) => {
+  const id = req.body.id;
+  try {
+    await User.findByIdAndDelete(id);
+    res.send("User Deleted Successfully");
+  } catch (err) {
+    res.send(err);
   }
 });
