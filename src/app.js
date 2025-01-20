@@ -6,6 +6,7 @@ const app = express();
 
 const { ConnectToDB } = require("./Config/database");
 const { User } = require("./Model/User");
+const { ReturnDocument } = require("mongodb");
 //Making the server listen on Port 7777
 ConnectToDB()
   .then(() => {
@@ -79,15 +80,17 @@ app.patch("/user", async (req, res) => {
   const updatedUser = req.body;
 
   try {
-    console.log(updatedUser);
-    const result = await User.findByIdAndUpdate(id, updatedUser);
-    console.log(updatedUser);
+    const result = await User.findByIdAndUpdate(id, updatedUser, {
+      returnDocument: "after"
+    });
+
     if (result.length === 0) {
       res.status(404).send("No user found with Id : ", id);
     } else {
-      res.send("User updated successfully");
+      res.send(result);
+      console.log(result);
     }
   } catch (err) {
-    res.send(err);
+    res.status(400).send(err);
   }
 });
