@@ -62,11 +62,31 @@ app.get("/feed", async (req, res) => {
   }
 });
 
+//DELETE Api to delete a user by ID
 app.delete("/user", async (req, res) => {
   const id = req.body.id;
   try {
     await User.findByIdAndDelete(id);
     res.send("User Deleted Successfully");
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+//UPDATE Api to find and update user by ID
+app.patch("/user", async (req, res) => {
+  const id = req.body.id;
+  const updatedUser = req.body;
+
+  try {
+    console.log(updatedUser);
+    const result = await User.findByIdAndUpdate(id, updatedUser);
+    console.log(updatedUser);
+    if (result.length === 0) {
+      res.status(404).send("No user found with Id : ", id);
+    } else {
+      res.send("User updated successfully");
+    }
   } catch (err) {
     res.send(err);
   }
