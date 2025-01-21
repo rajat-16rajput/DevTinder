@@ -81,7 +81,8 @@ app.patch("/user", async (req, res) => {
 
   try {
     const result = await User.findByIdAndUpdate(id, updatedUser, {
-      returnDocument: "after"
+      returnDocument: "after",
+      runValidators: true
     });
 
     if (result.length === 0) {
