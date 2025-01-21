@@ -6,6 +6,7 @@ const app = express();
 
 const { ConnectToDB } = require("./Config/database");
 const { User } = require("./Model/User");
+const { ReturnDocument } = require("mongodb");
 //Making the server listen on Port 7777
 ConnectToDB()
   .then(() => {
@@ -18,20 +19,78 @@ ConnectToDB()
     console.log("Something went wrong... Couldn't connect to DB");
   });
 
+//Converting the requested json objects into js objects at all Routes
+app.use(express.json());
+
+//POST Api to dyanamically add the data in the DB
 app.post("/signUp", (req, res) => {
-  const rohit = {
-    firstName: "Rohit",
-    lastName: "Sharma",
-    age: 37,
-    email: "rohit@hittu.com",
-    gender: "Male"
-  };
-  const user = new User(rohit);
+  const user = new User(req.body);
 
   try {
     user.save();
     res.send("User Added Successfully !");
   } catch (error) {
     res.status(400).send("No User Added");
+  }
+});
+
+//GET Api to fetch a user by the emailId
+app.get("/user", async (req, res) => {
+  const userEmail = req.body.emailId;
+  try {
+    const users = await User.find({ emailId: userEmail });
+    if (users.length === 0) {
+      res.status(404).send("No User found!");
+    } else {
+      res.send(users);
+    }
+  } catch (err) {
+    res.status(400).send("Something went wrong...");
+  }
+});
+
+//GET Api to fetch all documents
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    if (users.length === 0) {
+      res.status(404).send("No Users found");
+    } else {
+      res.send(users);
+    }
+  } catch (err) {
+    res.send("Something went wrong");
+  }
+});
+
+//DELETE Api to delete a user by ID
+app.delete("/user", async (req, res) => {
+  const id = req.body.id;
+  try {
+    await User.findByIdAndDelete(id);
+    res.send("User Deleted Successfully");
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+//UPDATE Api to find and update user by ID
+app.patch("/user", async (req, res) => {
+  const id = req.body.id;
+  const updatedUser = req.body;
+
+  try {
+    const result = await User.findByIdAndUpdate(id, updatedUser, {
+      returnDocument: "after"
+    });
+
+    if (result.length === 0) {
+      res.status(404).send("No user found with Id : ", id);
+    } else {
+      res.send(result);
+      console.log(result);
+    }
+  } catch (err) {
+    res.status(400).send(err);
   }
 });
