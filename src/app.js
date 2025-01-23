@@ -76,22 +76,27 @@ app.delete("/user", async (req, res) => {
 
 //UPDATE Api to find and update user by ID
 app.patch("/user", async (req, res) => {
-  const id = req.body.id;
-  const updatedUser = req.body;
-
+  const { playerId, ...updatedUser } = req.body;
   try {
-    const result = await User.findByIdAndUpdate(id, updatedUser, {
+    //Adding API level Validations
+    const ALLOWED_UPDATES = ["pictureUrl", "skills", "password"];
+    const isUpdateAllowed = Object.keys(updatedUser).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+    const result = await User.findByIdAndUpdate(playerId, updatedUser, {
       returnDocument: "after",
       runValidators: true
     });
-
-    if (result.length === 0) {
-      res.status(404).send("No user found with Id : ", id);
+    if (!result) {
+      res.status(404).send("No user found with Id : ", playerId);
     } else {
       res.send(result);
       console.log(result);
     }
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).send(err.message);
   }
 });

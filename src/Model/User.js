@@ -22,6 +22,9 @@ const userSchema = mongoose.Schema({
     unique: true,
     lowercase: true
   },
+  password: {
+    type: String
+  },
   gender: {
     type: String,
     required: true,
@@ -35,6 +38,11 @@ const userSchema = mongoose.Schema({
   pictureUrl: {
     type: String,
     default: "https://cdn-icons-png.flaticon.com/128/3135/3135715.png"
+  },
+
+  skills: {
+    type: [String],
+    required: true
   }
 });
 
