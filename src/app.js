@@ -23,14 +23,13 @@ ConnectToDB()
 app.use(express.json());
 
 //POST Api to dyanamically add the data in the DB
-app.post("/signUp", (req, res) => {
+app.post("/signUp", async (req, res) => {
   const user = new User(req.body);
-
   try {
-    user.save();
+    await user.save();
     res.send("User Added Successfully !");
   } catch (error) {
-    res.status(400).send("No User Added");
+    res.status(400).send({ error: error.message || "Something went wrong." });
   }
 });
 
