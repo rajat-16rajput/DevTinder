@@ -33,10 +33,8 @@ app.post("/signUp", async (req, res) => {
     //Validate
     validateSignup(req);
     const { firstName, lastName, emailId, password } = req.body;
-
     //Encrypt
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword);
 
     //Save the user
     const user = new User({
@@ -49,6 +47,24 @@ app.post("/signUp", async (req, res) => {
     res.send("User Added Successfully !");
   } catch (error) {
     res.status(400).send({ error: error.message || "Something went wrong." });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  const { emailId, password } = req.body;
+  try {
+    const user = await User.findOne({ emailId: emailId });
+    if (user === null) {
+      throw new Error("User not found");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new Error("Incorrect password");
+    } else {
+      res.send("Login Successful!!!");
+    }
+  } catch (err) {
+    res.status(400).send(err.message);
   }
 });
 
