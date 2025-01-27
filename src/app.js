@@ -7,6 +7,11 @@ const app = express();
 const { ConnectToDB } = require("./Config/database");
 const { User } = require("./Model/User");
 const { ReturnDocument } = require("mongodb");
+const { validateSignup } = require("./Utils/validation");
+
+//importing bcrypt
+const bcrypt = require("bcrypt");
+
 //Making the server listen on Port 7777
 ConnectToDB()
   .then(() => {
@@ -24,8 +29,22 @@ app.use(express.json());
 
 //POST Api to dyanamically add the data in the DB
 app.post("/signUp", async (req, res) => {
-  const user = new User(req.body);
   try {
+    //Validate
+    validateSignup(req);
+    const { firstName, lastName, emailId, password } = req.body;
+
+    //Encrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(hashedPassword);
+
+    //Save the user
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: hashedPassword
+    });
     await user.save();
     res.send("User Added Successfully !");
   } catch (error) {
