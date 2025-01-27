@@ -23,14 +23,13 @@ ConnectToDB()
 app.use(express.json());
 
 //POST Api to dyanamically add the data in the DB
-app.post("/signUp", (req, res) => {
+app.post("/signUp", async (req, res) => {
   const user = new User(req.body);
-
   try {
-    user.save();
+    await user.save();
     res.send("User Added Successfully !");
   } catch (error) {
-    res.status(400).send("No User Added");
+    res.status(400).send({ error: error.message || "Something went wrong." });
   }
 });
 
@@ -76,21 +75,27 @@ app.delete("/user", async (req, res) => {
 
 //UPDATE Api to find and update user by ID
 app.patch("/user", async (req, res) => {
-  const id = req.body.id;
-  const updatedUser = req.body;
-
+  const { playerId, ...updatedUser } = req.body;
   try {
-    const result = await User.findByIdAndUpdate(id, updatedUser, {
-      returnDocument: "after"
+    //Adding API level Validations
+    const ALLOWED_UPDATES = ["pictureUrl", "skills", "password"];
+    const isUpdateAllowed = Object.keys(updatedUser).every((k) =>
+      ALLOWED_UPDATES.includes(k)
+    );
+    if (!isUpdateAllowed) {
+      throw new Error("Update not allowed");
+    }
+    const result = await User.findByIdAndUpdate(playerId, updatedUser, {
+      returnDocument: "after",
+      runValidators: true
     });
-
-    if (result.length === 0) {
-      res.status(404).send("No user found with Id : ", id);
+    if (!result) {
+      res.status(404).send("No user found with Id : ", playerId);
     } else {
       res.send(result);
       console.log(result);
     }
   } catch (err) {
-    res.status(400).send(err);
+    res.status(400).send(err.message);
   }
 });
